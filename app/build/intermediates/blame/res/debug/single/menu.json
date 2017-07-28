@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "F:\\DeepcamFace\\ArcFace\\arcCamera1\\app\\build\\intermediates\\res\\merged\\debug\\menu\\activity_boxing_pick_flow.xml",
+        "source": "C:\\Users\\Administrator\\.android\\build-cache\\35241a2d7acb4fc202325d18194767d4f9472c16\\output\\res\\menu\\activity_boxing_pick_flow.xml"
+    },
+    {
+        "merged": "F:\\DeepcamFace\\ArcFace\\arcCamera1\\app\\build\\intermediates\\res\\merged\\debug\\menu\\ucrop_menu_activity.xml",
+        "source": "C:\\Users\\Administrator\\.android\\build-cache\\2065feda5f642f16a648ed69bc9c8fdc92fba1f0\\output\\res\\menu\\ucrop_menu_activity.xml"
+    },
+    {
+        "merged": "F:\\DeepcamFace\\ArcFace\\arcCamera1\\app\\build\\intermediates\\res\\merged\\debug\\menu\\camera.xml",
+        "source": "F:\\DeepcamFace\\ArcFace\\arcCamera1\\app\\src\\main\\res\\menu\\camera.xml"
+    },
+    {
+        "merged": "F:\\DeepcamFace\\ArcFace\\arcCamera1\\app\\build\\intermediates\\res\\merged\\debug\\menu\\activity_boxing_image_viewer.xml",
+        "source": "C:\\Users\\Administrator\\.android\\build-cache\\35241a2d7acb4fc202325d18194767d4f9472c16\\output\\res\\menu\\activity_boxing_image_viewer.xml"
+    }
+]
