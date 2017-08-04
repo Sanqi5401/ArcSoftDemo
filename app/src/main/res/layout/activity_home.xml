@@ -20,7 +20,7 @@
             app:theme="@style/ThemeToolbar">
         </android.support.v7.widget.Toolbar>
 
-        <LinearLayout
+        <RelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -28,10 +28,17 @@
             android:background="@color/white">
             <org.apmem.tools.layouts.FlowLayout
                 android:id="@+id/thingsGridContainer"
-                android:layout_gravity="center_horizontal"
+                android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Made by zsq"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
 
     </RelativeLayout>
 

@@ -207,7 +207,7 @@ public class CameraActivity extends Activity implements CameraCallback {
     }
 
     private void start(byte[] data, int width, int height) {
-        faceService.cameraRecognize(new FaceData(data, width, height));
+        EventBus.getDefault().post(new FaceData(data,width,height));
     }
 
 

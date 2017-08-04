@@ -119,6 +119,13 @@
             </android.support.v7.widget.CardView>
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Made by zsq"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"/>
+
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView

@@ -15,6 +15,8 @@ import com.arcsoft.library.module.FaceData;
 import com.arcsoft.library.module.FaceResponse;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class FaceService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         manager.onDestory();
+        EventBus.getDefault().unregister(this);
         return super.onUnbind(intent);
 
     }
@@ -55,6 +58,7 @@ public class FaceService extends Service {
         super.onCreate();
         manager = new FaceManager(this);
         manager.onCreate();
+        EventBus.getDefault().register(this);
     }
 
     public boolean enroll(String path,String name) {
@@ -97,20 +101,9 @@ public class FaceService extends Service {
     }
 
 
-    public  String bytesToHexString(byte[] src){
-        StringBuilder stringBuilder = new StringBuilder("");
-        if (src == null || src.length <= 0) {
-            return null;
-        }
-        for (int i = 0; i < src.length; i++) {
-            int v = src[i] & 0xFF;
-            String hv = Integer.toHexString(v);
-            if (hv.length() < 2) {
-                stringBuilder.append(0);
-            }
-            stringBuilder.append(hv);
-        }
-        return stringBuilder.toString();
-    }
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onMessageEvent(FaceData data) {
+        cameraRecognize(data);
+    };
 
 }
