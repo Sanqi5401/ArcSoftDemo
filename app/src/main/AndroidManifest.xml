@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.yanzi.playcamera"
+    package="org.zsq.playcamera"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -20,26 +20,37 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name="org.zsq.app.DemoApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name="org.yanzi.app.DemoApplication"
-        tools:replace="android:label,android:theme">
-        <activity
-            android:name="org.yanzi.activity.CameraActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-
-        </activity>
-        <activity android:name="org.yanzi.activity.EnrollActivity">
+        tools:replace="android:label,android:theme,android:icon">
+        <activity android:name="org.zsq.activity.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="org.zsq.activity.CameraActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+        </activity>
+        <activity android:name="org.zsq.activity.EnrollActivity">
+
+        </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.file.provider"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/boxing_file_provider" />
+        </provider>
     </application>
 
 </manifest>

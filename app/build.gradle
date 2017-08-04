@@ -33,10 +33,9 @@ android {
 }
 
 dependencies {
-    compile files('libs/facedetection.jar')
-    compile files('libs/facerecognition.jar')
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.bilibili:boxing-impl:0.6.0'
     compile('com.facebook.fresco:fresco:1.0.0') {
@@ -48,4 +47,10 @@ dependencies {
         exclude group: 'com.squareup.okio'
         exclude group: 'com.squareup.okhttp3'
     }
+    compile 'org.raphets:roundimageview:1.2.0'
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile 'org.apmem.tools:layouts:1.9@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'cn.pedant.sweetalert:library:1.3'
+    compile project(':arcsoftlibrary')
 }

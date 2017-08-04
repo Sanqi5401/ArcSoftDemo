@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_home"
+            android:icon="@drawable/home_drawer_icon"
+            android:title="主页"/>
+        <item
+            android:id="@+id/drawer_users"
+            android:icon="@drawable/users_drawer_icon"
+            android:title="注册"/>
+        <item
+            android:id="@+id/drawer_cameras"
+            android:icon="@drawable/ic_camera_enhance_white_48dp"
+            android:title="识别"/>
+    </group>
+</menu>

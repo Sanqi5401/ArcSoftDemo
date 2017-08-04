@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /*************************************************************************
+  ~  *
+  ~  * MySnapCam CONFIDENTIAL
+  ~  * FILE: home_alert_container.xml
+  ~  *
+  ~  *  [2009] - [2015] MySnapCam, LLC
+  ~  *  All Rights Reserved.
+  ~
+  ~ NOTICE:
+  ~  * All information contained herein is, and remains the property of MySnapCam LLC.
+  ~  * The intellectual and technical concepts contained herein are proprietary to MySnapCam
+  ~  * and may be covered by U.S. and Foreign Patents,patents in process, and are protected by
+  ~  * trade secret or copyright law.
+  ~  * Dissemination of this information or reproduction of this material
+  ~  * is strictly forbidden unless prior written permission is obtained
+  ~  * MySnapCam, LLC.
+  ~  *
+  ~  *
+  ~  * Written: Nate Ridderman
+  ~  * Updated: 7/1/2015
+  ~  */
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/homeThingContainer">
+
+    <ImageView
+        android:id="@+id/thingTypeIcon"
+        android:src="@drawable/ic_group_add_black_24dp"
+        style="@style/homeThingIcon"/>
+
+    <TextView
+        android:id="@+id/thingLabel"
+        android:text="添加"
+        style="@style/homeThingLabel"/>
+
+</LinearLayout>
