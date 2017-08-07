@@ -94,8 +94,8 @@ public class DisplayUtil {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			heightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
 		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			android.graphics.Point realSize = new android.graphics.Point();
-			Display.class.getMethod("getRealSize", android.graphics.Point.class).invoke(display, realSize);
+			Point realSize = new Point();
+			Display.class.getMethod("getRealSize", Point.class).invoke(display, realSize);
 			heightPixels = realSize.y;
 		}
 

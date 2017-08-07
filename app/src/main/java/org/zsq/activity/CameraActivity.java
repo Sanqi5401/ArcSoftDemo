@@ -1,17 +1,5 @@
 package org.zsq.activity;
 
-import java.util.List;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import org.zsq.app.DemoApplication;
-import org.zsq.camera.CameraCallback;
-
-import org.zsq.camera.CameraSurface;
-import org.zsq.playcamera.R;
-import org.zsq.util.DisplayUtil;
-
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,20 +10,26 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import android.widget.TextView;
-
 import com.arcsoft.facedetection.AFD_FSDKFace;
 import com.arcsoft.library.FaceService;
 import com.arcsoft.library.module.FaceData;
 import com.arcsoft.library.module.FaceResponse;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.zsq.app.DemoApplication;
+import org.zsq.camera.CameraCallback;
+import org.zsq.camera.CameraSurface;
+import org.zsq.playcamera.R;
+import org.zsq.util.DisplayUtil;
+import org.zsq.util.ImageUtil;
 
 /**
  * create by zsq
@@ -50,6 +44,7 @@ public class CameraActivity extends Activity implements CameraCallback {
     private FaceService faceService;
 
     private long time = 0;
+    private long detectionTime = 5000l;
 
 
     @Override
@@ -123,8 +118,7 @@ public class CameraActivity extends Activity implements CameraCallback {
         m_Paint.setTextSize(40);
     }
 
-
-    public void faceOut(AFD_FSDKFace result, float score, String name) {
+    public void faceOut(AFD_FSDKFace result, float score, String name, int orientation) {
         if (result != null) {
             Canvas canvas = null;
             try {
@@ -132,6 +126,9 @@ public class CameraActivity extends Activity implements CameraCallback {
                 if (canvas != null) {
                     canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR); //清楚掉上一次的画框。
                     Rect r = result.getRect();
+                    Log.e("Tag", "faceArea=" + r.left + ", " + r.top + ", " + r.right + ", " + r.bottom);
+                    r = ImageUtil.rotateRact(r, orientation, m_nScreenHeight, m_nScreenWidth);
+                    Log.e("Tag", "faceArea2=" + r.left + ", " + r.top + ", " + r.right + ", " + r.bottom);
                     canvas.drawRect(r, m_Paint);
                     if (score > 0.5) {
                         canvas.drawText("" + score, r.left, r.top - 20, m_Paint);
@@ -148,6 +145,25 @@ public class CameraActivity extends Activity implements CameraCallback {
 //            if (result.size() > 0) {
 //                showText("人脸检测：有 " + result.size() + " 个人。检测耗时：" + nEclipseTime + " ms");
 //            }
+        } else
+            clearUI();
+    }
+
+    private void clearUI() {
+
+        Canvas canvas = null;
+        try {
+
+            surfaceViewRect.setZOrderOnTop(true);
+            canvas = surfaceHolder.lockCanvas();
+            if (canvas != null) {
+                canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR); //清楚掉上一次的画框。
+            }
+        } catch (Exception Ex) {
+        } finally {
+            if (canvas != null) {
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
         }
     }
 
@@ -177,8 +193,8 @@ public class CameraActivity extends Activity implements CameraCallback {
 
     @Override
     public void onPreviewFrame(final byte[] bytes, final Camera camera) {
-
-        if (time != 0 || (System.currentTimeMillis() - time) < 1000) {
+           long mtime = System.currentTimeMillis();
+        if ((mtime - time) < detectionTime) {
             return;
         } else {
             Log.e("Tag", "width = " + m_nScreenWidth + "   " + m_nScreenHeight +
@@ -189,6 +205,10 @@ public class CameraActivity extends Activity implements CameraCallback {
             Log.e("Tag", "Camera degree = " + info.orientation);
             int width = camera.getParameters().getPreviewSize().width;
             int height = camera.getParameters().getPreviewSize().height;
+            start(bytes, width, height, info.orientation);
+            detectionTime = (System.currentTimeMillis() - mtime) +  500;
+            time = mtime;
+            /*
             switch (info.orientation) {
                 case 90:
                     start(rotateYUV420Degree90(bytes, width, height), height, width);
@@ -203,90 +223,36 @@ public class CameraActivity extends Activity implements CameraCallback {
                     start(bytes, width, height);
                     break;
             }
+            */
         }
     }
 
-    private void start(byte[] data, int width, int height) {
-        EventBus.getDefault().post(new FaceData(data,width,height));
+    private void start(byte[] data, int width, int height, int orientation) {
+//        EventBus.getDefault().post(new FaceData(data, width, height, orientation));
+            faceService.cameraRecognize(new FaceData(data, width, height, orientation));
     }
-
-
-    private byte[] rotateYUV420Degree90(byte[] data, int imageWidth, int imageHeight) {
-        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
-// Rotate the Y luma
-        int i = 0;
-        for (int x = 0; x < imageWidth; x++) {
-            for (int y = imageHeight - 1; y >= 0; y--) {
-                yuv[i] = data[y * imageWidth + x];
-                i++;
-            }
-
-        }
-// Rotate the U and V color components
-        i = imageWidth * imageHeight * 3 / 2 - 1;
-        for (int x = imageWidth - 1; x > 0; x = x - 2) {
-            for (int y = 0; y < imageHeight / 2; y++) {
-                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + x];
-                i--;
-                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + (x - 1)];
-                i--;
-            }
-        }
-        return yuv;
-    }
-
-    private byte[] rotateYUV420Degree180(byte[] data, int imageWidth, int imageHeight) {
-        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
-        int i = 0;
-        int count = 0;
-
-        for (i = imageWidth * imageHeight - 1; i >= 0; i--) {
-            yuv[count] = data[i];
-            count++;
-        }
-
-        i = imageWidth * imageHeight * 3 / 2 - 1;
-        for (i = imageWidth * imageHeight * 3 / 2 - 1; i >= imageWidth
-                * imageHeight; i -= 2) {
-            yuv[count++] = data[i - 1];
-            yuv[count++] = data[i];
-        }
-        return yuv;
-    }
-
-    private byte[] rotateYUV420Degree270(byte[] data, int imageWidth, int imageHeight) {
-        byte[] yuv = new byte[imageWidth * imageHeight * 3 / 2];
-        // Rotate the Y luma
-        int i = 0;
-        for (int x = imageWidth - 1; x >= 0; x--) {
-            for (int y = 0; y < imageHeight; y++) {
-                yuv[i] = data[y * imageWidth + x];
-                i++;
-            }
-        }// Rotate the U and V color components
-        i = imageWidth * imageHeight;
-        for (int x = imageWidth - 1; x > 0; x = x - 2) {
-            for (int y = 0; y < imageHeight / 2; y++) {
-                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + (x - 1)];
-                i++;
-                yuv[i] = data[(imageWidth * imageHeight) + (y * imageWidth) + x];
-                i++;
-            }
-        }
-        return yuv;
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(FaceResponse event) {
         if (event.getCode() != 0) {
+            clearUI();
             Log.e("Tag", "错误码：" + event.getCode());
         } else {
             Log.e("Tag", "成功：" + event.getType());
-            if (event.getType() == FaceResponse.FaceType.MATCH) {
-                Log.e("TAG", "match : " + event.getScore());
-                faceOut(event.getFace(), event.getScore(), event.getName());
+            switch (event.getType()) {
+                case DETECTION: {
+                    if (event.getList() == null || event.getList().size() <= 0) {
+                        clearUI();
+                    }
+                    break;
+                }
+                case MATCH: {
+                    Log.e("TAG", "match : " + event.getScore());
+                    faceOut(event.getFace(), event.getScore(), event.getName(), event.getOrientation());
+                    break;
+                }
             }
+
         }
     }
 

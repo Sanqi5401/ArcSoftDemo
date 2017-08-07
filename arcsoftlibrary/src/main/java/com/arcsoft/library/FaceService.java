@@ -7,12 +7,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 
 import com.arcsoft.facedetection.AFD_FSDKFace;
 import com.arcsoft.library.database.module.Face;
 import com.arcsoft.library.module.FaceData;
-import com.arcsoft.library.module.FaceResponse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,6 +23,7 @@ public class FaceService extends Service {
     private final static String APPID = "AeGta6Y1EuWcV2QX6Jb1xqmAMMHzHps4aiUg6ymuBZaz";
     private final static String APD_SDK = "7ia9gtggpr7keK7wvK3xgD2h2uSuDQXE5fvjMJuWGrMC";
     private final static String APR_SDK = "7ia9gtggpr7keK7wvK3xgD2wMhyEXJ7rJwwuEmC1zSR4";
+
 
     private FaceManager manager;
     private LocalBind local = new LocalBind();
@@ -66,7 +65,7 @@ public class FaceService extends Service {
         if (data != null) {
            List<AFD_FSDKFace> list =  manager.detection(data);
             if(list != null && list.size() > 0){
-                byte[] feature = manager.recognize(data,list.get(0).getRect());
+                byte[] feature = manager.recognize(data,list.get(0).getRect(), list.get(0).getDegree());
                 ContentValues values = new ContentValues();
                 values.put(Face.NAME,name);
                 values.put(Face.FEATURE, Base64.encodeToString(feature,Base64.DEFAULT));
@@ -82,7 +81,7 @@ public class FaceService extends Service {
         if(data != null){
             List<AFD_FSDKFace> list = manager.detection(data);
             for (AFD_FSDKFace afd_fsdkFace : list) {
-                byte[] feature = manager.recognize(data,afd_fsdkFace.getRect());
+                byte[] feature = manager.recognize(data,afd_fsdkFace.getRect(), afd_fsdkFace.getDegree());
                 int i = 0;
                 while (true){
                     Face face = new Face(FaceService.this,i);
@@ -92,11 +91,12 @@ public class FaceService extends Service {
                             || face.getFeature().length <= 0){
                         break;
                     }else {
-                        manager.match(feature,face,afd_fsdkFace);
+                        manager.match(feature, face, afd_fsdkFace, data.getOrientation());
                     }
                     i++;
                 }
             }
+
         }
     }
 

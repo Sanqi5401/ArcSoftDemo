@@ -1,18 +1,16 @@
 package org.zsq.activity;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-
 import com.arcsoft.library.FaceService;
+import com.arcsoft.library.database.module.Face;
 import com.arcsoft.library.module.FaceResponse;
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.config.BoxingConfig;
@@ -23,10 +21,6 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.raphets.roundimageview.RoundImageView;
-
-import com.arcsoft.library.database.module.Face;
-
 import org.zsq.app.DemoApplication;
 import org.zsq.playcamera.R;
 

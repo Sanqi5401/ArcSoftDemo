@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.arcsoft.facedetection.AFD_FSDKEngine;
 import com.arcsoft.facedetection.AFD_FSDKError;
@@ -87,7 +86,7 @@ public class FaceManager {
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
             byte[] nv21 = BitmapUtils.getNV21(width, height, bitmap);
-            return new FaceData(nv21, width, height);
+            return new FaceData(nv21, width, height, 0);
         } catch (Exception e) {
             e.printStackTrace();
             EventBus.getDefault().post(new FaceResponse(0XA001, FaceResponse.FaceType.DETECTION));
@@ -111,13 +110,13 @@ public class FaceManager {
     }
 
 
-    public byte[] recognize(FaceData data, Rect rect) {
+    public byte[] recognize(FaceData data, Rect rect, int degree) {
         byte[] face = new byte[22020];
         int width = data.getWidth();
         int height = data.getHeight();
         byte[] nv21 = data.getNv21();
         afrFsdkError = afrFsdkEngine.AFR_FSDK_ExtractFRFeature(nv21, width, height,
-                AFR_FSDKEngine.CP_PAF_NV21, rect, AFR_FSDKEngine.AFR_FOC_0, face);
+                AFR_FSDKEngine.CP_PAF_NV21, rect, degree, face);
         if (afrFsdkError.getCode() == 0) {
             EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.RECOGNITION, face));
             return face;
@@ -126,11 +125,11 @@ public class FaceManager {
         return null;
     }
 
-    public float match(byte[] mface1, Face mface2,AFD_FSDKFace face) {
+    public float match(byte[] mface1, Face mface2, AFD_FSDKFace face, int orientation) {
         AFR_FSDKMatching score = new AFR_FSDKMatching();
         afrFsdkError = afrFsdkEngine.AFR_FSDK_FacePairMatching(mface1, mface2.getFeature(), score);
         if (afrFsdkError.getCode() == 0) {
-            EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.MATCH, score.getScore(),face,mface2.getName()));
+            EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.MATCH, score.getScore(), face, mface2.getName(), orientation));
             return score.getScore();
 
         }

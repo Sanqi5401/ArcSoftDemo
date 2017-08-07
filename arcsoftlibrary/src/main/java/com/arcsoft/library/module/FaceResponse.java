@@ -22,6 +22,7 @@ public class FaceResponse {
     private float score;
     private AFD_FSDKFace face;
     private String name;
+    private int orientation;
 
     public FaceResponse(int code, FaceType type) {
         this.code = code;
@@ -41,12 +42,13 @@ public class FaceResponse {
     }
 
 
-    public FaceResponse(int code, FaceType type, float score,AFD_FSDKFace face,String name) {
+    public FaceResponse(int code, FaceType type, float score, AFD_FSDKFace face, String name, int orientation) {
         this.code = code;
         this.type = type;
         this.score = score;
         this.face = face;
         this.name = name;
+        this.orientation = orientation;
     }
 
     public int getCode() {
@@ -103,5 +105,13 @@ public class FaceResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
     }
 }

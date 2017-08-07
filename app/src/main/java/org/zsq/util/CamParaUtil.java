@@ -1,12 +1,12 @@
 package org.zsq.util;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.Log;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class CamParaUtil {
 	private static final String TAG = "yanzi";
@@ -25,10 +25,10 @@ public class CamParaUtil {
 		}
 	}
 
-	public  Size getPropPreviewSize(List<Camera.Size> list, float th, int minWidth){
+	public  Size getPropPreviewSize(List<Size> list, float th, int minWidth){
 		//Collections.sort(list, sizeComparator);
 		//return list.get(0);
-		
+
 		int i = 0;
 		for(Size s:list){
 			if((s.width >= minWidth) && equalRate(s, th)){
@@ -42,7 +42,7 @@ public class CamParaUtil {
 		}
 		return list.get(i);
 	}
-	public Size getPropPictureSize(List<Camera.Size> list, float th, int minWidth){
+	public Size getPropPictureSize(List<Size> list, float th, int minWidth){
 		Collections.sort(list, sizeComparator);
 
 		int i = 0;
@@ -70,7 +70,7 @@ public class CamParaUtil {
 		}
 	}
 
-	public  class CameraSizeComparator implements Comparator<Camera.Size>{
+	public  class CameraSizeComparator implements Comparator<Size>{
 		public int compare(Size lhs, Size rhs) {
 			// TODO Auto-generated method stub
 			if(lhs.width == rhs.width){
