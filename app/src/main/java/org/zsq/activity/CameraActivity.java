@@ -145,8 +145,7 @@ public class CameraActivity extends Activity implements CameraCallback {
 //            if (result.size() > 0) {
 //                showText("人脸检测：有 " + result.size() + " 个人。检测耗时：" + nEclipseTime + " ms");
 //            }
-        } else
-            clearUI();
+        }
     }
 
     private void clearUI() {

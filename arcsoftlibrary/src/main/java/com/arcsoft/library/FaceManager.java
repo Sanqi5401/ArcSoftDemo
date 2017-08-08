@@ -102,7 +102,6 @@ public class FaceManager {
         List<AFD_FSDKFace> list = new ArrayList<>();
         afdFsdkError = afdFsdkEngine.AFD_FSDK_StillImageFaceDetection(nv21, width, height, AFD_FSDKEngine.CP_PAF_NV21, list);
         if (afdFsdkError.getCode() == 0) {
-            EventBus.getDefault().post(new FaceResponse(afdFsdkError.getCode(), FaceResponse.FaceType.DETECTION, list));
             return list;
         }
         EventBus.getDefault().post(new FaceResponse(afdFsdkError.getCode(), FaceResponse.FaceType.DETECTION));
@@ -118,20 +117,19 @@ public class FaceManager {
         afrFsdkError = afrFsdkEngine.AFR_FSDK_ExtractFRFeature(nv21, width, height,
                 AFR_FSDKEngine.CP_PAF_NV21, rect, degree, face);
         if (afrFsdkError.getCode() == 0) {
-            EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.RECOGNITION, face));
+
             return face;
         }
         EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.RECOGNITION));
         return null;
     }
 
-    public float match(byte[] mface1, Face mface2, AFD_FSDKFace face, int orientation) {
+
+    public float match(byte[] mface1, Face mface2) {
         AFR_FSDKMatching score = new AFR_FSDKMatching();
         afrFsdkError = afrFsdkEngine.AFR_FSDK_FacePairMatching(mface1, mface2.getFeature(), score);
         if (afrFsdkError.getCode() == 0) {
-            EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.MATCH, score.getScore(), face, mface2.getName(), orientation));
             return score.getScore();
-
         }
         EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.MATCH));
         return 0;
