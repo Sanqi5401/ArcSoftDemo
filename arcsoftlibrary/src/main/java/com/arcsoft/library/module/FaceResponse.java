@@ -1,6 +1,7 @@
 package com.arcsoft.library.module;
 
 import com.arcsoft.facedetection.AFD_FSDKFace;
+import com.arcsoft.facetracking.AFT_FSDKFace;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * Created by Administrator on 2017/8/4.
  */
 
-public class FaceResponse {
+public class FaceResponse<T extends  ArcsoftFace> {
     public enum FaceType{
         INIT,
         DETECTION,
@@ -17,10 +18,10 @@ public class FaceResponse {
     }
     private int code;
     private FaceType type;
-    private List<AFD_FSDKFace> list;
+    private List<T> list;
     private byte[] feature;
     private float score;
-    private AFD_FSDKFace face;
+    private T face;
     private String name;
     private int orientation;
 
@@ -29,11 +30,12 @@ public class FaceResponse {
         this.type = type;
     }
 
-    public FaceResponse(int code, FaceType type, List<AFD_FSDKFace> list) {
+    public FaceResponse(int code, FaceType type, List<T> list) {
         this.code = code;
         this.type = type;
         this.list = list;
     }
+
 
     public FaceResponse(int code, FaceType type, byte[] feature) {
         this.code = code;
@@ -42,7 +44,7 @@ public class FaceResponse {
     }
 
 
-    public FaceResponse(int code, FaceType type, float score, AFD_FSDKFace face, String name, int orientation) {
+    public FaceResponse(int code, FaceType type, float score, T face, String name, int orientation) {
         this.code = code;
         this.type = type;
         this.score = score;
@@ -67,11 +69,11 @@ public class FaceResponse {
         this.type = type;
     }
 
-    public List<AFD_FSDKFace> getList() {
+    public List<T> getList() {
         return list;
     }
 
-    public void setList(List<AFD_FSDKFace> list) {
+    public void setList(List<T> list) {
         this.list = list;
     }
 
@@ -91,11 +93,11 @@ public class FaceResponse {
         this.score = score;
     }
 
-    public AFD_FSDKFace getFace() {
+    public ArcsoftFace getFace() {
         return face;
     }
 
-    public void setFace(AFD_FSDKFace face) {
+    public void setFace(T face) {
         this.face = face;
     }
 

@@ -11,6 +11,9 @@ import com.arcsoft.facedetection.AFD_FSDKFace;
 import com.arcsoft.facerecognition.AFR_FSDKEngine;
 import com.arcsoft.facerecognition.AFR_FSDKError;
 import com.arcsoft.facerecognition.AFR_FSDKMatching;
+import com.arcsoft.facetracking.AFT_FSDKEngine;
+import com.arcsoft.facetracking.AFT_FSDKError;
+import com.arcsoft.facetracking.AFT_FSDKFace;
 import com.arcsoft.library.database.module.Face;
 import com.arcsoft.library.module.FaceData;
 import com.arcsoft.library.module.FaceResponse;
@@ -30,18 +33,22 @@ public class FaceManager {
     private final static String APPID = "AeGta6Y1EuWcV2QX6Jb1xqmAMMHzHps4aiUg6ymuBZaz";
     private final static String APD_SDK = "7ia9gtggpr7keK7wvK3xgD2h2uSuDQXE5fvjMJuWGrMC";
     private final static String APR_SDK = "7ia9gtggpr7keK7wvK3xgD2wMhyEXJ7rJwwuEmC1zSR4";
+    private final static String APT_SDK = "7ia9gtggpr7keK7wvK3xgD2pCJi2skZAqDYy2iri7nvE";
 
     private AFD_FSDKEngine afdFsdkEngine;
     private AFR_FSDKEngine afrFsdkEngine;
+    private AFT_FSDKEngine aftFsdkEngine;
+
     private AFD_FSDKError afdFsdkError;
     private AFR_FSDKError afrFsdkError;
-    private boolean isInit = false;
-    private Context context;
+    private AFT_FSDKError aftFsdkError;
 
-    public FaceManager(Context context) {
+    private boolean isInit = false;
+
+    public FaceManager() {
         afdFsdkEngine = new AFD_FSDKEngine();
         afrFsdkEngine = new AFR_FSDKEngine();
-        this.context = context;
+        aftFsdkEngine = new AFT_FSDKEngine();
     }
 
 
@@ -53,10 +60,13 @@ public class FaceManager {
     public void onDestory() {
         afdFsdkEngine.AFD_FSDK_UninitialFaceEngine();
         afrFsdkEngine.AFR_FSDK_UninitialEngine();
+        aftFsdkEngine.AFT_FSDK_UninitialFaceEngine();
         afdFsdkEngine = null;
         afrFsdkEngine = null;
+        aftFsdkEngine = null;
         afrFsdkError = null;
         afdFsdkError = null;
+        aftFsdkError = null;
     }
 
 
@@ -71,9 +81,12 @@ public class FaceManager {
             afrFsdkError = afrFsdkEngine.AFR_FSDK_InitialEngine(APPID, APR_SDK);
             code = afrFsdkError.getCode();
             if (afrFsdkError.getCode() == 0) {
-                isInit = true;
-                EventBus.getDefault().post(new FaceResponse(code, FaceResponse.FaceType.INIT));
-                return true;
+                aftFsdkError = aftFsdkEngine.AFT_FSDK_InitialFaceEngine(APPID, APT_SDK, AFT_FSDKEngine.AFT_OPF_0_HIGHER_EXT, 16, 5);
+                if (aftFsdkError.getCode() == 0) {
+                    isInit = true;
+                    EventBus.getDefault().post(new FaceResponse(code, FaceResponse.FaceType.INIT));
+                    return true;
+                }
             }
         }
         EventBus.getDefault().post(new FaceResponse(code, FaceResponse.FaceType.INIT));
@@ -95,7 +108,7 @@ public class FaceManager {
     }
 
 
-    public List<AFD_FSDKFace> detection(FaceData data) {
+    public List<AFD_FSDKFace> fdDetection(FaceData data) {
         int width = data.getWidth();
         int height = data.getHeight();
         byte[] nv21 = data.getNv21();
@@ -108,6 +121,19 @@ public class FaceManager {
         return null;
     }
 
+    public List<AFT_FSDKFace> ftDetection(FaceData data){
+        int width = data.getWidth();
+        int height = data.getHeight();
+        byte[] nv21 = data.getNv21();
+        List<AFT_FSDKFace> list = new ArrayList<>();
+        aftFsdkError = aftFsdkEngine.AFT_FSDK_FaceFeatureDetect(nv21, width, height, AFT_FSDKEngine.CP_PAF_NV21, list);
+        if (aftFsdkError.getCode() == 0) {
+            return list;
+        }
+        EventBus.getDefault().post(new FaceResponse(aftFsdkError.getCode(), FaceResponse.FaceType.DETECTION));
+        return null;
+    }
+
 
     public byte[] recognize(FaceData data, Rect rect, int degree) {
         byte[] face = new byte[22020];
@@ -117,7 +143,6 @@ public class FaceManager {
         afrFsdkError = afrFsdkEngine.AFR_FSDK_ExtractFRFeature(nv21, width, height,
                 AFR_FSDKEngine.CP_PAF_NV21, rect, degree, face);
         if (afrFsdkError.getCode() == 0) {
-
             return face;
         }
         EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.RECOGNITION));
@@ -134,7 +159,6 @@ public class FaceManager {
         EventBus.getDefault().post(new FaceResponse(afrFsdkError.getCode(), FaceResponse.FaceType.MATCH));
         return 0;
     }
-
 
 
 }

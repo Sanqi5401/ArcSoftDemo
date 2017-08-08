@@ -9,7 +9,9 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import com.arcsoft.facedetection.AFD_FSDKFace;
+import com.arcsoft.facetracking.AFT_FSDKFace;
 import com.arcsoft.library.database.module.Face;
+import com.arcsoft.library.module.ArcsoftFace;
 import com.arcsoft.library.module.FaceData;
 import com.arcsoft.library.module.FaceResponse;
 
@@ -55,7 +57,7 @@ public class FaceService extends Service {
     public void onCreate() {
         super.onCreate();
         //初始化
-        manager = new FaceManager(this);
+        manager = new FaceManager();
         manager.onCreate();
         EventBus.getDefault().register(this);
     }
@@ -68,7 +70,7 @@ public class FaceService extends Service {
     public boolean enroll(String path, String name) {
         FaceData data = manager.decodePath(path);
         if (data != null) {
-            List<AFD_FSDKFace> list = manager.detection(data);
+            List<AFD_FSDKFace> list = manager.fdDetection(data);
             if (list != null) {
                 EventBus.getDefault().post(new FaceResponse(0, FaceResponse.FaceType.DETECTION, list));
                 if (list.size() > 0) {
@@ -90,10 +92,10 @@ public class FaceService extends Service {
 
     public void cameraRecognize(FaceData data) {
         if (data != null) {
-            List<AFD_FSDKFace> list = manager.detection(data);
+            List<AFT_FSDKFace> list = manager.ftDetection(data);
             if (list != null) {
-                EventBus.getDefault().post(new FaceResponse(0, FaceResponse.FaceType.DETECTION, list));
-                for (AFD_FSDKFace afd_fsdkFace : list) {
+                EventBus.getDefault().post(new FaceResponse(0, FaceResponse.FaceType.DETECTION));
+                for (AFT_FSDKFace afd_fsdkFace : list) {
                     byte[] feature = manager.recognize(data, afd_fsdkFace.getRect(), afd_fsdkFace.getDegree());
                     EventBus.getDefault().post(new FaceResponse(0, FaceResponse.FaceType.RECOGNITION, feature));
                     if (feature == null)

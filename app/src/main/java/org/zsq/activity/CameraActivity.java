@@ -18,6 +18,7 @@ import android.view.SurfaceView;
 
 import com.arcsoft.facedetection.AFD_FSDKFace;
 import com.arcsoft.library.FaceService;
+import com.arcsoft.library.module.ArcsoftFace;
 import com.arcsoft.library.module.FaceData;
 import com.arcsoft.library.module.FaceResponse;
 
@@ -118,7 +119,7 @@ public class CameraActivity extends Activity implements CameraCallback {
         m_Paint.setTextSize(40);
     }
 
-    public void faceOut(AFD_FSDKFace result, float score, String name, int orientation) {
+    public void faceOut(ArcsoftFace result, float score, String name, int orientation) {
         if (result != null) {
             Canvas canvas = null;
             try {
@@ -192,7 +193,7 @@ public class CameraActivity extends Activity implements CameraCallback {
 
     @Override
     public void onPreviewFrame(final byte[] bytes, final Camera camera) {
-           long mtime = System.currentTimeMillis();
+        long mtime = System.currentTimeMillis();
         if ((mtime - time) < detectionTime) {
             return;
         } else {
@@ -205,7 +206,7 @@ public class CameraActivity extends Activity implements CameraCallback {
             int width = camera.getParameters().getPreviewSize().width;
             int height = camera.getParameters().getPreviewSize().height;
             start(bytes, width, height, info.orientation);
-            detectionTime = (System.currentTimeMillis() - mtime) +  500;
+            detectionTime = (System.currentTimeMillis() - mtime) + 500;
             time = mtime;
             /*
             switch (info.orientation) {
@@ -228,7 +229,7 @@ public class CameraActivity extends Activity implements CameraCallback {
 
     private void start(byte[] data, int width, int height, int orientation) {
 //        EventBus.getDefault().post(new FaceData(data, width, height, orientation));
-            faceService.cameraRecognize(new FaceData(data, width, height, orientation));
+        faceService.cameraRecognize(new FaceData(data, width, height, orientation));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
